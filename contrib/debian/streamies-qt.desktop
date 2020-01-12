@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Streamies
+Comment=Streamies P2P Cryptocurrency
+Comment[fr]=Streamies, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=Streamies, eşten eşe kriptografik sanal para birimi
+Exec=streamies-qt %u
+Terminal=false
+Type=Application
+Icon=streamies128
+MimeType=x-scheme-handler/streamies;
+Categories=Office;Finance;

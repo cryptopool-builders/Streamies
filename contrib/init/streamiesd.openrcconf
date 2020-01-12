@@ -1,0 +1,26 @@
+# /etc/conf.d/streamiesd: config file for /etc/init.d/streamiesd
+
+# Config file location
+#BITCOIND_CONFIGFILE="/etc/streamies/streamies.conf"
+
+# What directory to write pidfile to?  (created and owned by $BITCOIND_USER)
+#BITCOIND_PIDDIR="/var/run/streamiesd"
+
+# What filename to give the pidfile
+#BITCOIND_PIDFILE="${BITCOIND_PIDDIR}/streamiesd.pid"
+
+# Where to write streamiesd data (be mindful that the blockchain is large)
+#BITCOIND_DATADIR="/var/lib/streamiesd"
+
+# User and group to own streamiesd process
+#BITCOIND_USER="streamies"
+#BITCOIND_GROUP="streamies"
+
+# Path to streamiesd executable
+#BITCOIND_BIN="/usr/bin/streamiesd"
+
+# Nice value to run streamiesd under
+#BITCOIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+BITCOIND_OPTS=""

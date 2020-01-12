@@ -1,0 +1,26 @@
+[Unit]
+Description=Streamies's distributed currency daemon
+After=network.target
+
+[Service]
+User=streamies
+Group=streamies
+
+Type=forking
+PIDFile=/var/lib/streamiesd/streamiesd.pid
+
+ExecStart=/usr/bin/streamiesd -daemon -pid=/var/lib/streamiesd/streamiesd.pid \
+          -conf=/etc/streamies/streamies.conf -datadir=/var/lib/streamiesd
+
+ExecStop=-/usr/bin/streamies-cli -conf=/etc/streamies/streamies.conf \
+         -datadir=/var/lib/streamiesd stop
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target
