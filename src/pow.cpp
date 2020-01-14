@@ -104,7 +104,7 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast)
     if (bnNew > Params().ProofOfWorkLimit()) {
         bnNew = Params().ProofOfWorkLimit();
     }
-	uint256 blockbitsattarget = uint256().SetCompact(bnNew);
+	uint256 blockbitsattarget = bnNew.GetCompact();
 	
 	LogPrintf("Current Target = %s\n", blockbitsattarget.ToString().c_str());
     return bnNew.GetCompact();	
