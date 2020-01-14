@@ -23,6 +23,7 @@
 #endif
 
 #include <stdint.h>
+#include <stdio.h>
 
 #include <boost/assign/list_of.hpp>
 
@@ -639,6 +640,8 @@ Value getblocktemplate(const Array& params, bool fHelp)
     result.push_back(Pair("sizelimit", (int64_t)MAX_BLOCK_SIZE));
     result.push_back(Pair("curtime", pblock->GetBlockTime()));
     result.push_back(Pair("bits", strprintf("%08x", pblock->nBits)));
+	uint256 blocknbits = uint256().SetCompact(pblock->nBits);
+	LogPrintf("Block nBits at getblocktemplate = %s\n", blocknbits.ToString().c_str());
     result.push_back(Pair("height", (int64_t)(pindexPrev->nHeight + 1)));
     result.push_back(Pair("votes", aVotes));
 
