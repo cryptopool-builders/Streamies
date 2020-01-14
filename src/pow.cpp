@@ -14,6 +14,7 @@
 #include "util.h"
 
 #include <math.h>
+#include <stdio.h>
 
 unsigned int static DarkGravityWave(const CBlockIndex* pindexLast) 
 {
@@ -104,6 +105,7 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast)
         bnNew = Params().ProofOfWorkLimit();
     }
 
+	LogPrintf("Current Target = %s\n", bnNew.GetCompact().ToString().c_str());
     return bnNew.GetCompact();	
 }
 	
@@ -126,7 +128,9 @@ bool CheckProofOfWork(uint256 SkunkHash, unsigned int nBits)
     // Check range
     if (fNegative || bnTarget == 0 || fOverflow || bnTarget > Params().ProofOfWorkLimit())
         return error("CheckProofOfWork() : nBits below minimum work");
-
+	LogPrintf("Block Hash = %s\n", bnNew.ToString().c_str());
+	LogPrintf("Block nBits = %s\n", SkunkHash.ToString().c_str());
+	
     // Check proof of work matches claimed amount
     if (SkunkHash > bnTarget)
         return error("CheckProofOfWork() : hash doesn't match nBits");
