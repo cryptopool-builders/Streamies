@@ -1,1 +1,2 @@
 contrib/streamiesd.bash-completion	streamiesd
+contrib/streamies-cli.bash-completion streamies-cli

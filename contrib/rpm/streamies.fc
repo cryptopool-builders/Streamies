@@ -1,0 +1,8 @@
+/usr/bin/streamies-cli		--	gen_context(system_u:object_r:streamies_exec_t,s0)
+/usr/sbin/streamiesd		--	gen_context(system_u:object_r:streamies_exec_t,s0)
+/usr/lib(64)?/streamies/streamiesd		--	gen_context(system_u:object_r:streamies_exec_t,s0)
+
+/etc/streamies(/.*)?		gen_context(system_u:object_r:streamies_conf_t,s0)
+/var/lib/streamies(/.*)?		gen_context(system_u:object_r:streamies_var_lib_t,s0)
+
+(/var)?/run/streamiesd(/.*)?   gen_context(system_u:object_r:streamies_var_run_t,s0)

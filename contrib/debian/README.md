@@ -14,7 +14,7 @@ To install:
 	sudo update-desktop-database
 
 If you build yourself, you will either need to modify the paths in
-the .desktop file or copy or symlink your streamiesqt binary to `/usr/bin`
+the .desktop file or copy or symlink your streamies-qt binary to `/usr/bin`
 and the `../../share/pixmaps/streamies128.png` to `/usr/share/pixmaps`
 
 streamies-qt.protocol (KDE)

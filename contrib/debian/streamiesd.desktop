@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=STRMS Core
+Comment=STRMS P2P Cryptocurrency
+Comment[fr]=STRMS, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=STRMS, eşten eşe kriptografik sanal para birimi
+Exec=streamies-qt %u
+Terminal=false
+Type=Application
+Icon=streamies128
+MimeType=x-scheme-handler/streamies;
+Categories=Office;Finance;
+StartupWMClass=Streamies-qt

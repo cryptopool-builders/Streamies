@@ -1,26 +1,44 @@
+# It is not recommended to modify this file in-place, because it will
+# be overwritten during package upgrades. If you want to add further
+# options or overwrite existing ones then use
+# $ systemctl edit bitcoind.service
+# See "man systemd.service" for details.
+
+# Note that almost all daemon options could be specified in
+# /etc/streamies/streamies.conf
+
 [Unit]
-Description=Streamies's distributed currency daemon
+Description=STRMS daemon
 After=network.target
 
 [Service]
+ExecStart=/usr/bin/streamiesd -daemon -conf=/etc/streamies/streamies.conf -pid=/run/streamiesd/streamiesd.pid
+# Creates /run/streamiesd owned by streamies
+RuntimeDirectory=streamiesd
 User=streamies
-Group=streamies
-
 Type=forking
-PIDFile=/var/lib/streamiesd/streamiesd.pid
+PIDFile=/run/streamiesd/streamiesd.pid
+Restart=on-failure
 
-ExecStart=/usr/bin/streamiesd -daemon -pid=/var/lib/streamiesd/streamiesd.pid \
-          -conf=/etc/streamies/streamies.conf -datadir=/var/lib/streamiesd
+# Hardening measures
+####################
 
-ExecStop=-/usr/bin/streamies-cli -conf=/etc/streamies/streamies.conf \
-         -datadir=/var/lib/streamiesd stop
-
-Restart=always
+# Provide a private /tmp and /var/tmp.
 PrivateTmp=true
-TimeoutStopSec=60s
-TimeoutStartSec=2s
-StartLimitInterval=120s
-StartLimitBurst=5
+
+# Mount /usr, /boot/ and /etc read-only for the process.
+ProtectSystem=full
+
+# Disallow the process and all of its children to gain
+# new privileges through execve().
+NoNewPrivileges=true
+
+# Use a new /dev namespace only populated with API pseudo devices
+# such as /dev/null, /dev/zero and /dev/random.
+PrivateDevices=true
+
+# Deny the creation of writable and executable memory mappings.
+MemoryDenyWriteExecute=true
 
 [Install]
 WantedBy=multi-user.target

@@ -17,7 +17,7 @@ BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
             VALUE "CompanyName",        "Streamies"
-            VALUE "FileDescription",    "streamiesd (OSS daemon/client for Streamies)"
+            VALUE "FileDescription",    "streamiesd (OSS daemon/client for STRMS)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
             VALUE "InternalName",       "streamiesd"
             VALUE "LegalCopyright",     COPYRIGHT_STR

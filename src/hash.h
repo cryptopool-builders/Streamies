@@ -1,35 +1,32 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Streamies developers
+// Copyright (c) 2015-2018 The PIVX developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOIN_HASH_H
-#define BITCOIN_HASH_H
+#ifndef STRMS_HASH_H
+#define STRMS_HASH_H
 
 #include "crypto/ripemd160.h"
 #include "crypto/sha256.h"
-#include "prevector.h"
 #include "serialize.h"
 #include "uint256.h"
 #include "version.h"
+
+#include "crypto/sph_skein.h"
+#include "crypto/sph_cubehash.h"
+#include "crypto/sph_fugue.h"
+#include "crypto/sph_gost.h"
+#include "crypto/sha512.h"
 
 #include <iomanip>
 #include <openssl/sha.h>
 #include <sstream>
 #include <vector>
-using namespace std;
+
+
 typedef uint256 ChainCode;
-
-#ifdef GLOBALDEFINED
-#define GLOBAL
-#else
-#define GLOBAL extern
-#endif
-
-
 
 /** A hasher class for Bitcoin's 256-bit hash (double SHA-256). */
 class CHash256
@@ -42,9 +39,9 @@ public:
 
     void Finalize(unsigned char hash[OUTPUT_SIZE])
     {
-        unsigned char buf[sha.OUTPUT_SIZE];
+        unsigned char buf[CSHA256::OUTPUT_SIZE];
         sha.Finalize(buf);
-        sha.Reset().Write(buf, sha.OUTPUT_SIZE).Finalize(hash);
+        sha.Reset().Write(buf, CSHA256::OUTPUT_SIZE).Finalize(hash);
     }
 
     CHash256& Write(const unsigned char* data, size_t len)
@@ -60,6 +57,58 @@ public:
     }
 };
 
+class CHash512
+{
+private:
+    CSHA512 sha;
+
+public:
+    static const size_t OUTPUT_SIZE = CSHA512::OUTPUT_SIZE;
+
+    void Finalize(unsigned char hash[OUTPUT_SIZE])
+    {
+        unsigned char buf[CSHA512::OUTPUT_SIZE];
+        sha.Finalize(buf);
+        sha.Reset().Write(buf, CSHA512::OUTPUT_SIZE).Finalize(hash);
+    }
+
+    CHash512& Write(const unsigned char* data, size_t len)
+    {
+        sha.Write(data, len);
+        return *this;
+    }
+
+    CHash512& Reset()
+    {
+        sha.Reset();
+        return *this;
+    }
+};
+
+#ifdef GLOBALDEFINED
+#define GLOBAL
+#else
+#define GLOBAL extern
+#endif
+
+GLOBAL sph_skein512_context     z_skein;
+GLOBAL sph_cubehash512_context  z_cubehash;
+GLOBAL sph_fugue512_context     z_fugue;
+GLOBAL sph_gost512_context      z_gost;
+
+#define fillz() do { \
+    sph_skein512_init(&z_skein); \
+    sph_cubehash512_init(&z_cubehash); \
+    sph_fugue512_init(&z_fugue); \
+    sph_gost512_init(&z_gost); \
+} while (0) 
+
+#define ZSKEIN (memcpy(&ctx_skein, &z_skein, sizeof(z_skein)))
+#define ZFUGUE (memcpy(&ctx_fugue, &z_fugue, sizeof(z_fugue)))
+#define ZGOST (memcpy(&ctx_gost, &z_gost, sizeof(z_gost)))
+
+
+/* ----------- Bitcoin Hash ------------------------------------------------- */
 /** A hasher class for Bitcoin's 160-bit hash (SHA-256 + RIPEMD-160). */
 class CHash160
 {
@@ -71,9 +120,9 @@ public:
 
     void Finalize(unsigned char hash[OUTPUT_SIZE])
     {
-        unsigned char buf[sha.OUTPUT_SIZE];
+        unsigned char buf[CSHA256::OUTPUT_SIZE];
         sha.Finalize(buf);
-        CRIPEMD160().Write(buf, sha.OUTPUT_SIZE).Finalize(hash);
+        CRIPEMD160().Write(buf, CSHA256::OUTPUT_SIZE).Finalize(hash);
     }
 
     CHash160& Write(const unsigned char* data, size_t len)
@@ -89,12 +138,46 @@ public:
     }
 };
 
+/** Compute the 256-bit hash of a std::string */
+inline std::string Hash(std::string input)
+{
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, input.c_str(), input.size());
+    SHA256_Final(hash, &sha256);
+    std::stringstream ss;
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+    }
+    return ss.str();
+}
+
+/** Compute the 256-bit hash of a void pointer */
 inline void Hash(void* in, unsigned int len, unsigned char* out)
 {
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
     SHA256_Update(&sha256, in, len);
     SHA256_Final(out, &sha256);
+}
+
+/** Compute the 512-bit hash of an object. */
+template <typename T1>
+inline uint512 Hash512(const T1 pbegin, const T1 pend)
+{
+    static const unsigned char pblank[1] = {};
+    uint512 result;
+    CHash512().Write(pbegin == pend ? pblank : (const unsigned char*)&pbegin[0], (pend - pbegin) * sizeof(pbegin[0])).Finalize((unsigned char*)&result);
+    return result;
+}
+template <typename T1, typename T2>
+inline uint512 Hash512(const T1 p1begin, const T1 p1end, const T2 p2begin, const T2 p2end)
+{
+    static const unsigned char pblank[1] = {};
+    uint512 result;
+    CHash512().Write(p1begin == p1end ? pblank : (const unsigned char*)&p1begin[0], (p1end - p1begin) * sizeof(p1begin[0])).Write(p2begin == p2end ? pblank : (const unsigned char*)&p2begin[0], (p2end - p2begin) * sizeof(p2begin[0])).Finalize((unsigned char*)&result);
+    return result;
 }
 
 /** Compute the 256-bit hash of an object. */
@@ -219,13 +302,50 @@ uint256 SerializeHash(const T& obj, int nType = SER_GETHASH, int nVersion = PROT
 
 unsigned int MurmurHash3(unsigned int nHashSeed, const std::vector<unsigned char>& vDataToHash);
 
-void BIP32Hash(const unsigned char chainCode[32], unsigned int nChild, unsigned char header, const unsigned char data[32], unsigned char output[64]);
+void BIP32Hash(const ChainCode chainCode, unsigned int nChild, unsigned char header, const unsigned char data[32], unsigned char output[64]);
 
 //int HMAC_SHA512_Init(HMAC_SHA512_CTX *pctx, const void *pkey, size_t len);
 //int HMAC_SHA512_Update(HMAC_SHA512_CTX *pctx, const void *pdata, size_t len);
 //int HMAC_SHA512_Final(unsigned char *pmd, HMAC_SHA512_CTX *pctx);
 
+/* ----------- SkunkHash algo ------------------------------------------------ */
+
+template<typename T1>
+inline uint256 SkunkHash(const T1 pbegin, const T1 pend)
+
+{
+    sph_skein512_context     ctx_skein;
+    sph_cubehash512_context   ctx_cubehash;
+    sph_fugue512_context      ctx_fugue;
+    sph_gost512_context      ctx_gost;
+    static unsigned char pblank[1];
+
+#ifndef QT_NO_DEBUG
+    //std::string strhash;
+    //strhash = "";
+#endif
+    
+    uint512 hash[17];
+
+    sph_skein512_init(&ctx_skein);
+    sph_skein512 (&ctx_skein, (pbegin == pend ? pblank : static_cast<const void*>(&pbegin[0])), (pend - pbegin) * sizeof(pbegin[0]));
+    sph_skein512_close(&ctx_skein, static_cast<void*>(&hash[0]));
+    
+    sph_cubehash512_init(&ctx_cubehash);
+    sph_cubehash512 (&ctx_cubehash, static_cast<const void*>(&hash[0]), 64);
+    sph_cubehash512_close(&ctx_cubehash, static_cast<void*>(&hash[1]));
+        
+    sph_fugue512_init(&ctx_fugue);
+    sph_fugue512 (&ctx_fugue, static_cast<const void*>(&hash[1]), 64);
+    sph_fugue512_close(&ctx_fugue, static_cast<void*>(&hash[2]));
+
+    sph_gost512_init(&ctx_gost);
+    sph_gost512 (&ctx_gost, static_cast<const void*>(&hash[2]), 64);
+    sph_gost512_close(&ctx_gost, static_cast<void*>(&hash[3]));
+
+    return hash[3].trim256();
+}
 
 void scrypt_hash(const char* pass, unsigned int pLen, const char* salt, unsigned int sLen, char* output, unsigned int N, unsigned int r, unsigned int p, unsigned int dkLen);
 
-#endif // BITCOIN_HASH_H
+#endif // STRMS_HASH_H

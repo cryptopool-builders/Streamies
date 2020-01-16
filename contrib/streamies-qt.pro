@@ -111,7 +111,6 @@ HEADERS += src/activemasternode.h \
            src/rpcprotocol.h \
            src/rpcserver.h \
            src/serialize.h \
-		   src/hashblock.h \
            src/spork.h \
            src/streams.h \
            src/sync.h \
@@ -134,7 +133,6 @@ HEADERS += src/activemasternode.h \
            src/compat/sanity.h \
            src/config/streamies-config.h \
            src/crypto/common.h \
-		   src/crypto/scrypt.h \
            src/crypto/hmac_sha256.h \
            src/crypto/hmac_sha512.h \
            src/crypto/rfc6979_hmac_sha256.h \
@@ -146,6 +144,17 @@ HEADERS += src/activemasternode.h \
 		   src/crypto/sph_cubehash.h \
 		   src/crypto/sph_fugue.h \
 		   src/crypto/sph_gost.h \
+           src/crypto/sph_blake.h \
+           src/crypto/sph_bmw.h \
+           src/crypto/sph_cubehash.h \
+           src/crypto/sph_echo.h \
+           src/crypto/sph_groestl.h \
+           src/crypto/sph_jh.h \
+           src/crypto/sph_keccak.h \
+           src/crypto/sph_luffa.h \
+           src/crypto/sph_shavite.h \
+           src/crypto/sph_simd.h \
+           src/crypto/sph_skein.h \
            src/crypto/sph_types.h \
            src/json/json_spirit.h \
            src/json/json_spirit_error_position.h \
@@ -217,7 +226,6 @@ HEADERS += src/activemasternode.h \
            src/script/sigcache.h \
            src/script/sign.h \
            src/script/standard.h \
-           src/test/bignum.h \
            src/univalue/univalue.h \
            src/univalue/univalue_escapes.h \
            src/leveldb/db/builder.h \
@@ -430,19 +438,27 @@ SOURCES += src/activemasternode.cpp \
            src/compat/glibcxx_compat.cpp \
            src/compat/glibcxx_sanity.cpp \
            src/compat/strnlen.cpp \
-		   src/crypto/scrypt.cpp \
            src/crypto/aes_helper.c \
-		   src/crypto/skein.c \
 		   src/crypto/cubehash.c \
 		   src/crypto/fugue.c \
 		   src/crypto/gost.c \
+           src/crypto/blake.c \
+           src/crypto/bmw.c \
+           src/crypto/echo.c \
+           src/crypto/groestl.c \
            src/crypto/hmac_sha256.cpp \
            src/crypto/hmac_sha512.cpp \
+           src/crypto/jh.c \
+           src/crypto/keccak.c \
+           src/crypto/luffa.c \
            src/crypto/rfc6979_hmac_sha256.cpp \
            src/crypto/ripemd160.cpp \
            src/crypto/sha1.cpp \
            src/crypto/sha256.cpp \
            src/crypto/sha512.cpp \
+           src/crypto/shavite.c \
+           src/crypto/simd.c \
+           src/crypto/skein.c \
            src/json/json_spirit_reader.cpp \
            src/json/json_spirit_value.cpp \
            src/json/json_spirit_writer.cpp \

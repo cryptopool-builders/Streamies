@@ -1,6 +1,6 @@
 usr/local/bin/streamies-qt usr/bin
-share/pixmaps/bitcoin32.xpm usr/share/pixmaps
-share/pixmaps/bitcoin16.xpm usr/share/pixmaps
-share/pixmaps/bitcoin128.png usr/share/pixmaps
+share/pixmaps/streamies32.xpm usr/share/pixmaps
+share/pixmaps/streamies16.xpm usr/share/pixmaps
+share/pixmaps/streamies128.png usr/share/pixmaps
 debian/streamies-qt.desktop usr/share/applications
 debian/streamies-qt.protocol usr/share/kde4/services/

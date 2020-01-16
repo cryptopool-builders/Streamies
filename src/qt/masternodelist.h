@@ -1,3 +1,8 @@
+// Copyright (c) 2014-2016 The Dash Developers
+// Copyright (c) 2016-2018 The PIVX developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef MASTERNODELIST_H
 #define MASTERNODELIST_H
 
@@ -57,15 +62,17 @@ private:
     Ui::MasternodeList* ui;
     ClientModel* clientModel;
     WalletModel* walletModel;
+    // Protects tableWidgetMasternodes
+    CCriticalSection cs_mnlist;
     CCriticalSection cs_mnlistupdate;
     QString strCurrentFilter;
 
 private Q_SLOTS:
     void showContextMenu(const QPoint&);
-    void on_filterLineEdit_textChanged(const QString& strFilterIn);
     void on_startButton_clicked();
     void on_startAllButton_clicked();
     void on_startMissingButton_clicked();
+    void on_filterLineEdit_textChanged(const QString& strFilterIn);
     void on_tableWidgetMyMasternodes_itemSelectionChanged();
     void on_UpdateButton_clicked();
 };

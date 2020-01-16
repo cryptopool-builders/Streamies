@@ -19,8 +19,8 @@ BEGIN
     BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
-            VALUE "CompanyName",        "Streamies"
-            VALUE "FileDescription",    "Streamies Core (OSS GUI client for Streamies)"
+            VALUE "CompanyName",        "STRMS"
+            VALUE "FileDescription",    "Streamies Core (OSS GUI client for STRMS)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
             VALUE "InternalName",       "streamies-qt"
             VALUE "LegalCopyright",     COPYRIGHT_STR

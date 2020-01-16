@@ -1,2 +1,3 @@
 usr/local/bin/streamiesd usr/bin
 usr/local/bin/streamies-cli usr/bin
+debian/examples/streamies.conf etc/streamies

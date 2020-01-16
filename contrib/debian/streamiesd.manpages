@@ -1,2 +1,2 @@
-debian/manpages/streamiesd.1
-debian/manpages/streamies.conf.5
+doc/man/streamiesd.1
+doc/man/streamies-cli.1

@@ -1,0 +1,157 @@
+
+## <summary>policy for streamies</summary>
+
+
+########################################
+## <summary>
+##	Transition to streamies.
+## </summary>
+## <param name="domain">
+## <summary>
+##	Domain allowed to transition.
+## </summary>
+## </param>
+#
+interface(`streamies_domtrans',`
+	gen_require(`
+		type streamies_t, streamies_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	domtrans_pattern($1, streamies_exec_t, streamies_t)
+')
+
+
+########################################
+## <summary>
+##	Execute streamies server in the streamies domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`streamies_initrc_domtrans',`
+	gen_require(`
+		type streamies_initrc_exec_t;
+	')
+
+	init_labeled_script_domtrans($1, streamies_initrc_exec_t)
+')
+
+
+########################################
+## <summary>
+##	Search streamies lib directories.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`streamies_search_lib',`
+	gen_require(`
+		type streamies_var_lib_t;
+	')
+
+	allow $1 streamies_var_lib_t:dir search_dir_perms;
+	files_search_var_lib($1)
+')
+
+########################################
+## <summary>
+##	Read streamies lib files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`streamies_read_lib_files',`
+	gen_require(`
+		type streamies_var_lib_t;
+	')
+
+	files_search_var_lib($1)
+	read_files_pattern($1, streamies_var_lib_t, streamies_var_lib_t)
+')
+
+########################################
+## <summary>
+##	Manage streamies lib files.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`streamies_manage_lib_files',`
+	gen_require(`
+		type streamies_var_lib_t;
+	')
+
+	files_search_var_lib($1)
+	manage_files_pattern($1, streamies_var_lib_t, streamies_var_lib_t)
+')
+
+########################################
+## <summary>
+##	Manage streamies lib directories.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`streamies_manage_lib_dirs',`
+	gen_require(`
+		type streamies_var_lib_t;
+	')
+
+	files_search_var_lib($1)
+	manage_dirs_pattern($1, streamies_var_lib_t, streamies_var_lib_t)
+')
+
+
+########################################
+## <summary>
+##	All of the rules required to administrate
+##	a streamies environment
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+## <param name="role">
+##	<summary>
+##	Role allowed access.
+##	</summary>
+## </param>
+## <rolecap/>
+#
+interface(`streamies_admin',`
+	gen_require(`
+		type streamies_t;
+		type streamies_initrc_exec_t;
+		type streamies_var_lib_t;
+	')
+
+	allow $1 streamies_t:process { ptrace signal_perms };
+	ps_process_pattern($1, streamies_t)
+
+	streamies_initrc_domtrans($1)
+	domain_system_change_exemption($1)
+	role_transition $2 streamies_initrc_exec_t system_r;
+	allow $2 system_r;
+
+	files_search_var_lib($1)
+	admin_pattern($1, streamies_var_lib_t)
+
+')
+
