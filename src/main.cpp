@@ -2388,12 +2388,8 @@ bool static DisconnectTip(CValidationState& state)
         assert(view.Flush());
     }
     LogPrint("bench", "- Disconnect block: %.2fms\n", (GetTimeMicros() - nStart) * 0.001);
-
-    // Write the chain state to disk, if necessary. Always write to disk if this is the first of a new file.
-    FlushStateMode flushMode = FLUSH_STATE_IF_NEEDED;
-    if (pindexNew->pprev && (pindexNew->GetBlockPos().nFile != pindexNew->pprev->GetBlockPos().nFile))
-        flushMode = FLUSH_STATE_ALWAYS;
-    if (!FlushStateToDisk(state, flushMode))
+    // Write the chain state to disk, if necessary.
+    if (!FlushStateToDisk(state, FLUSH_STATE_ALWAYS))
         return false;
     // Resurrect mempool transactions from the disconnected block.
     BOOST_FOREACH (const CTransaction& tx, block.vtx) {
